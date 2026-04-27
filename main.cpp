@@ -9,7 +9,7 @@ int main()
     if (ptr == nullptr){
         std::cerr << "mem allocation failed" << '\n';
     }
-    *ptr = 98;
+    *ptr = 11;
     std::cout << "the value is: " << *ptr << '\n';
     
     free(ptr);
@@ -21,7 +21,7 @@ int main()
     if (ptr1 == nullptr){
         std::cerr << "mem allocation failed" << '\n';
     }
-    *ptr1 = 45;
+    *ptr1 = 22;
     std::cout << "the value is: " << *ptr1 << '\n';
     
     myfree(ptr1);
@@ -39,8 +39,39 @@ int main()
     
     address of ptr1: 0x7f1d12cee018
     address of ptr2: 0x7f1d12cee018
-
+    
     address of ptr1: 0x7fae12d9d018
     address of ptr2: 0x7fae12d9d018
     */
+   
+   // testing coalesce
+   
+    int* ptr3 = (int*)mymalloc(sizeof(int));
+    *ptr3 = 30;
+    std::cout << "\n\n value of ptr3: " << *ptr3 << '\n';
+    
+    int* ptr4 = (int*)mymalloc(sizeof(int));
+    *ptr4 = 40;
+    std::cout << "\n\n value of ptr4: " << *ptr4 << '\n';
+    
+    myfree(ptr3);
+    std::cout << "address of ptr3: " << ptr3 << '\n';
+    ptr3 = nullptr;
+
+    myfree(ptr4);
+    std::cout << "address of ptr4: " << ptr4 << '\n';
+    ptr4 = nullptr;
+    
+    //need to make it continious for this to work
+    int* ptr5 = (int*)mymalloc(sizeof(int)*2);
+    *ptr5 = 70;
+    std::cout << "\n\n value of ptr5: " << *ptr5 << '\n';
+    myfree(ptr5);
+    std::cout << "address of ptr5: " << ptr5 << '\n';
+    ptr5 = nullptr;
+
+
+
+
+
 }

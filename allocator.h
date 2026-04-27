@@ -61,6 +61,28 @@ void* mymalloc(size_t size) {
 }
 
 
+void coalesce(block* ptr) {
+    block* current = free_list;
+
+    if(ptr->next && ptr->next->is_free) {
+        ptr->size += sizeof(block) + ptr->next->size; //merge next blocks data + its metadata
+        ptr->next = ptr->next->next; //skip over the merged block
+    }
+
+    if (free_list != ptr) {
+        while(current && current->next != ptr) {
+            current = current -> next;
+        }
+    
+        if (current->next == ptr && current->is_free) {
+            current->size += sizeof(block) + ptr -> size;
+            current->next = current->next->next;
+        }
+    }
+    
+}
+
+
 void myfree(void* ptr) {
     if (!ptr){
         return;
@@ -68,6 +90,7 @@ void myfree(void* ptr) {
 
     block* meta = (block*)ptr - 1; //puts it back to where metadata is (actual start)
     meta->is_free = true; //now we dont fully remove it, just mark it as free, but can be resued
+    coalesce(meta); //merge space around it if its freee into 1 big block
     
     // munmap(meta, meta->size + sizeof(block));
     //give back to OS, from the actual start + its total size, which is (actual size + metadata)
