@@ -4,6 +4,7 @@
 
 int main()
 {
+    init_pool();
     int* ptr = (int*)malloc(sizeof(int));
 
     if (ptr == nullptr){
@@ -60,18 +61,15 @@ int main()
 
     myfree(ptr4);
     std::cout << "address of ptr4: " << ptr4 << '\n';
+    std::cout << "sizeof of ptr4: " << sizeof(ptr4) << '\n';
     ptr4 = nullptr;
-    
-    //need to make it continious for this to work
-    int* ptr5 = (int*)mymalloc(sizeof(int)*2);
+    std::cout << "sizeof of block: " << sizeof(block) << '\n';
+    std::cout << "sizeof int: " << sizeof(int) << '\n';
+
+    int* ptr5 = (int*)mymalloc(sizeof(int)*4);
     *ptr5 = 70;
     std::cout << "\n\n value of ptr5: " << *ptr5 << '\n';
     myfree(ptr5);
     std::cout << "address of ptr5: " << ptr5 << '\n';
     ptr5 = nullptr;
-
-
-
-
-
 }
