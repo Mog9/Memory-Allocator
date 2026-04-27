@@ -1,0 +1,40 @@
+# Build artifacts
+*.o
+*.obj
+*.out
+*.exe
+*.app
+
+# Static/Dynamic libraries
+*.a
+*.so
+*.dll
+*.dylib
+
+# Object files (explicit)
+mall
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Build directories
+build/
+bin/
+dist/
+
+# Debug
+*.dSYM/
+*.stackdump
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
