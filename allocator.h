@@ -28,27 +28,36 @@ mmap(
 */
 
 
-
-
+block* free_list = nullptr;
 
 void* mymalloc(size_t size) {
     const size_t METADATA = sizeof(block);
     size_t total_size = METADATA + size; //to get user size + metadata space
-    void* addr = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    block* current = free_list;
     
-    if (addr == MAP_FAILED) {
-        perror("mmap failed");
-        return nullptr;
-    } else {
-        block* meta = (block*) addr;
-        meta -> size = size;
-        meta -> is_free = false;
-        meta -> next = nullptr;
-
-        return (block*)addr + 1;
-        // returning address only means ptr at metadata, doing + 1 puts it to next pointer where user enteres value
+    while(current != NULL && !(current->is_free && current->size >= size)) {
+        current = current -> next;
     }
-
+    
+    if(current != NULL) {
+        current->is_free = false;
+        return current + 1;
+    } else {
+        void* addr = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        if (addr == MAP_FAILED) {
+            perror("mmap failed");
+            return nullptr;
+        } else {
+            block* meta = (block*) addr;
+            meta -> size = size;
+            meta -> is_free = false;
+            meta -> next = free_list;
+            free_list = meta; //add it in freelist if found
+    
+            return (block*)addr + 1;
+            // returning address only means ptr at metadata, doing + 1 puts it to next pointer where user enteres value
+        }
+    }
 }
 
 
@@ -58,8 +67,9 @@ void myfree(void* ptr) {
     }
 
     block* meta = (block*)ptr - 1; //puts it back to where metadata is (actual start)
+    meta->is_free = true; //now we dont fully remove it, just mark it as free, but can be resued
     
-    munmap(meta, meta->size + sizeof(block));
+    // munmap(meta, meta->size + sizeof(block));
     //give back to OS, from the actual start + its total size, which is (actual size + metadata)
 }
 
