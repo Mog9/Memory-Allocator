@@ -73,4 +73,17 @@ int main()
     myfree(ptr6);
     std::cout << "address of ptr6: " << ptr6 << " -> using the address of the first block created (both blocks were freed and used as 1)" << "\n\n";
     ptr6 = nullptr;
+    
+    //test blocksplit
+    int* ptr7 = (int*)mymalloc(sizeof(int) * 20);
+    *ptr7 = 89;
+    std::cout << "\n\nvalue of ptr7: " << *ptr7 << '\n';
+    myfree(ptr7);
+    std::cout << "address of ptr7: " << ptr7 <<"\n\n";
+    ptr7 = nullptr;
+    
+    int* ptr8 = (int*)mymalloc(sizeof(int));
+    *ptr8 = 99;
+    std::cout << "\n\nvalue of ptr8: " << *ptr8 << '\n';
+    std::cout << "address of ptr8: " << ptr8 <<"\n\n";
 }

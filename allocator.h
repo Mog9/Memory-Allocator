@@ -39,6 +39,22 @@ void init_pool() {
 
 block* free_list = nullptr;
 
+
+//block splitting
+void block_split(block* b, size_t requested_size) {
+    block* leftover = (block*)((char*)(b + 1) + requested_size);
+    size_t orignal_size = b->size;
+    block* old_next = b->next;
+    b -> size = requested_size;
+    b -> is_free = false;
+
+    leftover->size = orignal_size - requested_size - sizeof(block);
+    leftover->is_free = true;
+    leftover->next = old_next;
+    b->next = leftover;
+}
+
+
 void* mymalloc(size_t size) {
     const size_t METADATA = sizeof(block);
     size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1); //round
@@ -51,7 +67,11 @@ void* mymalloc(size_t size) {
     }
     
     if(current != NULL) {
-        current->is_free = false;
+        if (current->size >= size + sizeof(block) + sizeof(void*)){
+            block_split(current, size);
+        } else {
+            current->is_free = false;
+        }
         return current + 1;
     } else {
         block* meta = (block*) pool_current;
